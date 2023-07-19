@@ -44,12 +44,12 @@
         from browser.widgets.menu import Menu
         zone2 = document["zone2"]
         menu = Menu(zone2)
-        def Video_callback_example(url):
+        def url_callback_example(url):
             window.location.href=url
 
         # Add new menu options
         main_menu_widget = menu.add_menu("Menu button 1")
-        main_menu_widget.add_item("menu option name", callback=lambda ev: Video_callback_example("{url goes here}"))
+        main_menu_widget.add_item("menu option name", callback=lambda ev: url_callback_example("{url goes here}"))
     </script>
     <div id="zone2"></div>
 </div>
