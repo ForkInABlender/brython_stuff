@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://raw.githubusercontent.com/davidjbradshaw/imagemap-resizer/master/js/imageMapResizer.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/maphilight/1.4.0/jquery.maphilight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.3/brython.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.3/brython_stdlib.min.js"></script>
+    <style>
+        img{
+            height:auto;
+            width:auto;
+        }
+    #container{
+      display: flex;
+    }
+    #zone {
+        position: absolute;
+        top: 15%;
+        left: 62.2253%;
+    }
+    #zone2 {
+        flex: 1;
+    }
+    </style>
+    <script type="text/javascript">
+        $(function() {
+            $('.map').maphilight({
+                fillColor: '0000f1',
+                strokeColor: '00ff00',
+            });
+            $('.map').imageMapResize();
+        });
+    </script>
+</head>
+
+<body onload="brython()">
+<div id="container">
+    <!-- image tag and image-map tags go here -->
+
+    <script type="text/python3">
+        from browser import document, window, html
+        from browser.widgets.menu import Menu
+        zone2 = document["zone2"]
+        menu = Menu(zone2)
+        def Video_callback_example(url):
+            window.location.href=url
+
+        # Add new menu options
+        main_menu_widget = menu.add_menu("Menu button 1")
+        main_menu_widget.add_item("menu option name", callback=lambda ev: Video_callback_example("{url goes here}"))
+    </script>
+    <div id="zone2"></div>
+</div>
+</body>
+</html>
