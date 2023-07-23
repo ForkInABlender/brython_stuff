@@ -70,21 +70,19 @@ The world is as, at that point, how you define it and as limited as you imagine 
                     rightLeg = THREE.Mesh.new(THREE.BoxGeometry.new(0.4, 1, 0.4), material)
                     
 
-                    head.position.y = 2.2
-                    body.position.y = 1.2
-                    
-                    leftArm.position.x = -0.6
-                    leftArm.position.y = 1.2
-                    rightArm.position.x = 0.6
-                    rightArm.position.y = 1.2
-                    leftLeg.position.y = 0.1
-                    leftLeg.position.x = -0.2
-                    rightLeg.position.y = 0.1
-                    rightLeg.position.x = 0.2
+                    head.position.y = 0.88
+                    body.position.y = 0.48
+                    leftArm.position.x = -0.24
+                    leftArm.position.y = 0.48
+                    rightArm.position.x = 0.24
+                    rightArm.position.y = 0.48
+                    leftLeg.position.y = 0.04
+                    leftLeg.position.x = -0.08
+                    rightLeg.position.y = 0.04
+                    rightLeg.position.x = 0.08
                     
                     character = THREE.Group.new()
                     character.add(head)
-                    #character.add(camera)
                     character.add(body)
                     character.add(leftArm)
                     character.add(rightArm)
@@ -106,7 +104,6 @@ The world is as, at that point, how you define it and as limited as you imagine 
                 img.bind('load', img_onload)            
             reader.bind("load", onload)
             reader.readAsDataURL(file)
-
         document["file_input"].bind("change", read_file)
     </script>
 </body>
