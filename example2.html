@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!-- Dylan Kenneth Eliot & GPT-4-plugins
+
+This was constructed so one can use image maps and brython.js to do iframe control and definition as well as control the <area> tags.
+ This allows for defining one's own custom logic for how it should operate instead with brython.js alone. Now, if you wanted, you could define
+  in said iframes a way to feed in the loaded scripts, then you could also use python in those iframes as well. If used with "zerorpc", one can
+ do things like have a server and a client (the iframed content and the main page) load each part needed for a game.
+
+Lets say you needed each object configured but keep most of the structure simple. With zerorpc, the function can be defined in a iframe, then used
+ by the main html post to render each piece. for instance, air blocks & stone blocks. An Air block has nothing but a hitbox. Whereas a stone block
+  you have to consider how the collission on it was done. A button operation is similar. In this case, one is detecting of a mouse event, a
+  "left click" event and returning some functional operation. That could be setting the browser's URL and going to that URL.
+
+
+-->
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/maphilight/1.4.0/jquery.maphilight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.3/brython.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.3/brython_stdlib.min.js"></script>
+    <style>
+        img{
+            height:auto;
+            width:auto;
+        }
+    #container{
+      display: flex;
+    }
+    #zone {
+        position: absolute;
+        top: 15%;
+        left: 62.2253%;
+    }
+    #zone2 {
+        flex: 1;
+    }
+    </style>
+    <script type="text/javascript">
+        $(function() {
+            $('.map').maphilight({
+                fillColor: '0000f1',
+                strokeColor: '00ff00',
+            });
+             $('.map').imageMapResize();
+        });
+    </script>
+</head>
+
+<body onload="brython()">
+<div id="container">
+    <img src="img url goes here" usemap="#map" class="map" data-maphilight='{"alwaysOn":false}'>
+    <map name="map">
+        <!-- your image map <area> tags go here -->
+    </map>
+    <div id="zone2"></div>
+    <br>
+    <div id="video_zone"></div>
+</div>
+<script type="text/python3">
+    from browser import document, window, html
+    video_zone = document["video_zone"]
+    
+    def video_callback_example(src, title, width="806", height="366", frameborder="0", allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share", allowfullscreen=True):
+        video_zone.clear()
+        iframe = html.IFRAME(width=width, height=height, src=src, title=title, frameborder=frameborder, allow=allow, allowfullscreen=True)
+        video_zone <= iframe
+        
+    def on_area_click(ev):
+        ev.preventDefault()
+        video_callback_example(src=ev.target.href, title=ev.target.title)
+        
+    for area in document.select('area'):
+        area.bind('click', on_area_click)
+</script>
+</body>
+</html>
