@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audio Synthesis with Brython</title>
+<script src="https://cdn.jsdelivr.net/npm/brython@3.11.0/brython.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/brython@3.11.0/brython_stdlib.js"></script>
+</head>
+<body onload="brython()">
+<button id="play_button">Play Tone</button>
+<script type="text/python">
+from browser import document, window
+
+# Create an audio context
+audio_context = window.AudioContext.new()
+
+def play_tone(event):
+    # Create an oscillator node
+    oscillator = audio_context.createOscillator()
+    oscillator.type = 'sine'  # Type of wave
+    oscillator.frequency.value = 440  # Frequency in Hz (A4 note)
+    
+    # Connect the oscillator to the audio context's destination (speakers)
+    oscillator.connect(audio_context.destination)
+    
+    # Start the oscillator and stop it after 2 seconds
+    oscillator.start()
+    oscillator.stop(audio_context.currentTime + 2)
+
+document["play_button"].bind("click", play_tone)
+    </script>
+</body>
+</html>
