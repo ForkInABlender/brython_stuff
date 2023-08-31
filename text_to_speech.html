@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text to Speech with Brython</title>
+<script src="https://cdn.jsdelivr.net/npm/brython@3.11.0/brython.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/brython@3.11.0/brython_stdlib.js"></script>
+</head>
+<body onload="brython()">
+<input type="text" id="text_input" placeholder="Enter text to convert to speech">
+<button id="speak_button">Speak Text</button>
+<script type="text/python">
+from browser import document, window
+
+def speak_text(event):
+    # Get the text from the input field
+    text = document["text_input"].value
+    
+    # Use the Web Speech API to synthesize the speech
+    speech = window.SpeechSynthesisUtterance.new(text)
+    window.speechSynthesis.speak(speech)
+
+document["speak_button"].bind("click", speak_text)
+    </script>
+</body>
+</html>
