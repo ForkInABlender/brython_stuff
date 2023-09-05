@@ -1,0 +1,86 @@
+<!-- Dylan Kenneth Eliot & GPT-4-plugins & GPT-4-code-interpreter
+
+So, when I asked it to update the code so it worked with brython.js, this is what we've came up with.
+
+Originally, the ImageResize class was javascript code. And what you're seeing links the bits where the clickable image map coordinates are resized
+ and adjusted for the size of the device window. This means that as the size of the window changes, zoomed in or out, it will conform each <area>'s
+  coordinate layout to the new size of the image. This also makes sure that the image size is irrelavent to where the initial points are mapped
+ onto of it.
+
+From here, templating from the code, and using https://www.image-map.net/ should become easier. If you need to later on after templating,
+ Simply remove the highlight imports and javascript code. I've found that it helped with determining if the user hovered over the right thing or
+  if I misplaced a dot for the coordinates of that part of the image maps. It also kept one certain where things from being mislinked or
+ misconfigured.
+
+
+-->
+
+
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.11.0/brython_stdlib.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/maphilight/1.4.0/jquery.maphilight.min.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                $('.map').maphilight({
+                    fillColor: '0000f1',
+                    strokeColor: '00ff00',
+                });
+            });
+        </script>
+    </head>
+    <body onload="brython()">
+        <div class="holder">
+            <img src="[URL path or image]" data-imgsize="1024x786" usemap="#map" class="map" id="map"/>
+            <map name="map">
+                <!-- ... [rest of the map areas] -->
+            </map>
+        </div>
+        <script type="text/python">
+            from browser import document, window
+            class ImageResize:
+                def __init__(self, config):
+                    self.imageW = config["width"]
+                    self.imageH = config["height"]
+                    self.imageMap = document[config["element"]]
+                    mapId = self.imageMap.attrs["usemap"]
+                    mapElem = f'map[name="{mapId[1:]}"]'
+                    self.areaArray = list(document[mapElem].children)
+                    window.bind("resize", self.resizeEvent)
+                    window.setTimeout(self.imgMap, 500)
+                def getCoordinates(self, elem):
+                    if "data-coords" in elem.attrs:
+                        areaCords = elem.attrs["data-coords"]
+                    else:
+                        areaCords = elem.attrs["coords"]
+                        elem.attrs["data-coords"] = areaCords
+                    return areaCords
+                def imgMap(self):
+                    self.wPercent = self.imageMap.offsetWidth / 100
+                    self.hPercent = self.imageMap.offsetHeight / 100
+                    for area in self.areaArray:
+                        self.areaLoop(area)
+                def areaLoop(self, area):
+                    coordinates = self.getCoordinates(area).split(",")
+                    coordsPercent = ",".join([str(self.mapCoords(coordinate, index)) for index, coordinate in enumerate(coordinates)])
+                    area.attrs["coords"] = coordsPercent
+                def mapCoords(self, coordinate, index):
+                    parseCord = int(coordinate)
+                    return self.coordinatesMath(parseCord, self.imageW if index % 2 == 0 else self.imageH, self.wPercent if index % 2 == 0 else self.hPercent)
+                def coordinatesMath(self, coordinates, imgVal, percentVal):
+                    return (coordinates / imgVal) * 100 * percentVal
+                def resizeEvent(self, event):
+                    self.imgMap()
+            def initialize():
+                img = document["map"]
+                resizeImg = ImageResize({
+                    "width": img.width,
+                    "height": img.height,
+                    "element": "#map"
+                })
+            document.bind("DOMContentLoaded", initialize)
+        </script>
+    </body>
+</html>
