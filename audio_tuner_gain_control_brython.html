@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!-- Dylan Kenneth Eliot & GPT-4-plugins
+
+This is for tuning the microphone so it can listen as well as a human ear. Of course, it would take a smarter engineer or at least a clever hacker
+ or audio engineer and hacker than I to refine such. But now that it is here, if implemented with ones own gpt model, one can likely get it to
+ listen and pick out vocal patterns. Or even give insight into how our human counter parts work.
+
+
+-->
+
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.10.1/brython.min.js"></script>
+</head>
+<body onload="brython()">
+    <input type="range" id="gainControl" min="0" max="2" step="0.1" value="1">
+    <button id="startRecording">Start Recording</button>
+    <button id="stopRecording">Stop Recording</button>
+    <a id="downloadLink" style="display:none">Download</a>
+    <script type="text/python">
+        from browser import document, window
+
+        def set_gain(event):
+            value = float(document["gainControl"].value)
+            window.setGain(value)
+
+        def start_recording(event):
+            window.startRecording()
+
+        def stop_recording(event):
+            window.stopRecording()
+
+        document["gainControl"].bind("input", set_gain)
+        document["startRecording"].bind("click", start_recording)
+        document["stopRecording"].bind("click", stop_recording)
+    </script>
+    <script>
+        let audioContext = new AudioContext();
+        let gainNode = audioContext.createGain();
+        let noiseGate = audioContext.createScriptProcessor(4096, 1, 1);
+        let mediaStreamSource = null;
+        let mediaRecorder = null;
+        let chunks = [];
+
+        noiseGate.onaudioprocess = function(event) {
+            let input = event.inputBuffer.getChannelData(0);
+            let output = event.outputBuffer.getChannelData(0);
+            for (let i = 0; i < input.length; i++) {
+                output[i] = Math.abs(input[i]) > 0.02 ? input[i] : 0;
+            }
+        };
+
+        navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            mediaStreamSource = audioContext.createMediaStreamSource(stream);
+            mediaStreamSource.connect(noiseGate).connect(gainNode).connect(audioContext.destination);
+        });
+
+        function setGain(value) {
+            gainNode.gain.value = value;
+        }
+
+        function startRecording() {
+            navigator.mediaDevices.getDisplayMedia({ video: true, audio: { systemAudio: true } })
+            .then(stream => {
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = event => chunks.push(event.data);
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    document.getElementById("downloadLink").href = url;
+                    document.getElementById("downloadLink").download = 'recorded.webm';
+                    document.getElementById("downloadLink").style.display = 'block';
+                };
+                mediaRecorder.start();
+            });
+        }
+
+        function stopRecording() {
+            if (mediaRecorder) {
+                mediaRecorder.stop();
+            }
+        }
+
+        window.setGain = setGain;
+        window.startRecording = startRecording;
+        window.stopRecording = stopRecording;
+    </script>
+</body>
+</html>
