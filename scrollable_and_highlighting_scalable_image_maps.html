@@ -7,6 +7,15 @@ This just highlights scrollable image maps with dynamically scaling of their coo
 
 
  -->
+<!-- # Dylan Kenneth Eliot & GPT-4o ( Alpha Edition )
+
+
+This just highlights scrollable image maps with dynamically scaling of their coordinate-points. 
+
+
+
+
+ -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,12 +30,12 @@ This just highlights scrollable image maps with dynamically scaling of their coo
     <style>
         body {
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: top;
+            align-items: top;
             height: 100vh;
         }
         .scrollable-container {
-            height: 470px; /* Adjust height to accommodate the largest image */
+            height: 300px; /* Adjust height to accommodate the largest image */
             overflow-x: scroll;
             overflow-y: hidden;
             white-space: nowrap;
@@ -112,7 +121,7 @@ images = [
 
 for image in images:
     item = html.DIV(Class="item")
-    img = html.IMG(src=image["src"], useMap=image["usemap"], Class=image["class"], style={"max-width": "600px", "max-height": "600px"})
+    img = html.IMG(src=image["src"], useMap=image["usemap"], Class=image["class"], style={"width": "60%", "max-height": "auto"})
     item <= img
     scrollable_container <= item
 
@@ -137,7 +146,7 @@ def apply_maphilight():
         'fillColor': 'ff00ff',
         'strokeColor': '00ffff',
     })
-    window.jQuery('img[usemap]').imageMapResize();
+    window.jQuery('.map').imageMapResize();
 
 window.setTimeout(apply_maphilight, 1000)
 </script>
