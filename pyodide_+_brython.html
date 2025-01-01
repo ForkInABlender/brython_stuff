@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brython Controlling Pyodide</title>
+    <!-- Load Brython -->
+    <script src="https://cdn.jsdelivr.net/npm/brython@3.11.2/brython.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/brython@3.11.2/brython_stdlib.js"></script>
+    <!-- Load Pyodide -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+</head>
+<body onload="brython()">
+    <h1>Brython Controls Pyodide</h1>
+    
+    <!-- Brython Script to Control Pyodide -->
+    <script type="text/python">
+from browser import window, console, aio
+
+async def load_pyodide():
+    console.log("Loading Pyodide...")
+    pyodide = await window.loadPyodide()
+    console.log("Pyodide loaded!")
+
+    # Example: Run Python code in Pyodide
+    result = await pyodide.runPythonAsync("""
+import math
+math.sqrt(16)
+    """)
+    console.log(f"Result from Pyodide: {result}")
+    
+    # Example: Interact with DOM via Brython
+    document = window.document
+    document.body.innerHTML += f"<p>Pyodide computed: {result}</p>"
+
+# Schedule the Pyodide loader
+aio.run(load_pyodide())
+    </script>
+</body>
+</html>
