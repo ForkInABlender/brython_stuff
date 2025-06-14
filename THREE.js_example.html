@@ -1,0 +1,56 @@
+<!-- #Dylan Kenneth Eliot
+
+render on dom canvas with abstraction of calls in to and out of webgl calls to gpu rendering before data retrieval back to image rendering via canvas.
+
+
+
+-->
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Three.js with Brython - Fixed Canvas Size</title>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/brython@3.11.1/brython.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/brython@3.11.1/brython_stdlib.js"></script>
+</head>
+<body onload="brython()">
+  <canvas id="scene"></canvas>
+  <script type="text/python">
+from browser import document, window
+
+# Access THREE.js
+THREE = window.THREE
+
+# Get canvas and set size
+width = 600
+height = 400
+
+# Create scene
+scene = THREE.Scene.new()
+
+# Setup camera
+camera = THREE.PerspectiveCamera.new(75, width / height, 0.1, 1000)
+camera.position.z = 5
+
+# Setup renderer
+renderer = THREE.WebGLRenderer.new({"canvas": document["scene"]})
+renderer.setSize(width, height)
+
+# Create cube
+geometry = THREE.BoxGeometry.new(1, 1, 1)
+material = THREE.MeshBasicMaterial.new({"color": 0x00ff00})
+cube = THREE.Mesh.new(geometry, material)
+scene.add(cube)
+
+# Animation loop
+def animate(ts):
+    window.requestAnimationFrame(animate)
+    cube.rotation.x += 0.01
+    cube.rotation.y += 0.01
+    cube.rotation.z += 0.01
+    renderer.render(scene, camera)
+
+animate(0)
+  </script>
+</body>
+</html>
