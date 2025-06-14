@@ -1,0 +1,83 @@
+<!-- # Dylan Kenneth Eliot
+
+Chainload brython.js so it runs as asynchronously as pyodide.js does
+
+then further chainload xml/yaml to json/dictionary data
+
+Or as I will refer to it, "the slimest gmail mailbox trays per email plus timestamps will ever get"...
+ -->
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/brython@3.11.3/brython.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/brython@3.11.3/brython_stdlib.js"></script>
+</head>
+<body onload="boot()">
+  <pre id="output">runtime loading, please wait...</pre>
+
+  <script>
+    async function boot() {
+      window.pyodide = await loadPyodide({
+        indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.1/full/"
+      });
+      await window.pyodide.loadPackage('micropip');
+      const micropip = window.pyodide.pyimport("micropip");
+      await micropip.install(["pyyaml","xmltodict"]);
+      brython();
+    }
+  </script>
+
+  <script type="text/python">
+from browser import document, window
+
+pyodide = window.pyodide
+
+def parse_xml():
+    xml = '''<note>
+    <to>User</to>
+    <from>ChatGPT</from>
+    <heading>Reminder</heading>
+    <body>Load xmltodict via Pyodide in Brython</body>
+</note>'''
+
+    pyodide.globals["xml"] = xml
+
+    code = '''
+import xmltodict
+parsed = xmltodict.parse(xml)
+'''
+
+    pyodide.runPython(code)
+    note=pyodide.globals["parsed"]['note']
+    n_to=note['to']
+    n_from=note['from']
+    n_heading=note['heading']
+    n_body=note['body']
+    
+    
+    document["output"].textContent = f"note from {n_from} to {n_to}:\nTitle: {n_heading}:\n   {n_body}"
+    pyodide.runPython('''
+import yaml
+import json
+
+yaml_data = """
+name: Dylan
+age: 30
+skills:
+  - Python
+  - AI
+"""
+
+# Load YAML
+parsed = yaml.safe_load(yaml_data)
+
+# Dump as JSON
+json_data = json.dumps(parsed, indent=2)
+print(json_data)
+''')
+
+parse_xml()
+  </script>
+</body>
+</html>
